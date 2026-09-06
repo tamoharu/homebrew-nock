@@ -1,9 +1,9 @@
 class Nock < Formula
   desc "Control your own Codex sessions from an iPhone over SSH"
   homepage "https://github.com/tamoharu/nock-setup"
-  url "https://github.com/tamoharu/nock-setup/releases/download/v0.3.1/nock-0.3.1.tar.gz"
-  version "0.3.1"
-  sha256 "7e4820e3efdddf26d973a139db9bf95cab845613d43e60197082b516c76e115f"
+  url "https://github.com/tamoharu/nock-setup/releases/download/v0.3.2/nock-0.3.2.tar.gz"
+  version "0.3.2"
+  sha256 "07e2fd2e70d6e6d729e59b86f38f6e2bccadd42ea00720dc7d3d595be7c237cd"
 
   depends_on "node@24"
   depends_on "tmux"
