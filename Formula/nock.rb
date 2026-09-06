@@ -1,12 +1,13 @@
 class Nock < Formula
   desc "Control your own Codex sessions from an iPhone over SSH"
   homepage "https://github.com/tamoharu/nock-setup"
-  url "https://github.com/tamoharu/nock-setup/releases/download/v0.2.0/nock-0.2.0.tar.gz"
-  version "0.2.0"
-  sha256 "655234ed6aa4c30c846608acec423b92527c3b272fb145897cf58d2fdeecbecb"
+  url "https://github.com/tamoharu/nock-setup/releases/download/v0.3.0/nock-0.3.0.tar.gz"
+  version "0.3.0"
+  sha256 "dffd4496c33282251c78bdfdcbbf62b49a2ce807ffac02ecdf794634299dcf15"
 
   depends_on "node@24"
   depends_on "tmux"
+  depends_on "openssl@3"
 
   def install
     libexec.install "remote/src", "remote/package.json", "remote/package-lock.json"
@@ -16,7 +17,7 @@ class Nock < Formula
     end
     (bin/"nock").write <<~SH
       #!/bin/sh
-      export PATH="#{Formula["node@24"].opt_bin}:#{Formula["tmux"].opt_bin}:#{HOMEBREW_PREFIX}/bin:$PATH"
+      export PATH="#{Formula["node@24"].opt_bin}:#{Formula["tmux"].opt_bin}:#{Formula["openssl@3"].opt_bin}:#{HOMEBREW_PREFIX}/bin:$PATH"
       export NOCK_APP_ROOT="#{opt_libexec}"
       export NOCK_NODE_BIN="#{Formula["node@24"].opt_bin}/node"
       exec "#{Formula["node@24"].opt_bin}/node" "#{opt_libexec}/src/cli.mjs" "$@"
@@ -39,6 +40,8 @@ class Nock < Formula
       Run nock setup once to create private settings and start the user service.
       Your initial workspace is ~/NockProjects. Existing settings are preserved.
       One line: brew install tamoharu/nock/nock && nock setup
+      Scan the QR using Nock on your iPhone. Keys are generated on the phone.
+      nock pair                           Show a new 5-minute pairing QR
 
       nock doctor                         Check SSH, Tailscale and Codex login
       nock login                          Only if Codex is not logged in yet
@@ -47,7 +50,8 @@ class Nock < Formula
 
       iPhone Bundle ID: com.deep.nock
       API credentials are discovered over authenticated SSH; no token copy needed.
-      SSH keys, OS Remote Login, and Apple APNs credentials cannot be provisioned by brew.
+      OS Remote Login, Tailscale and Apple APNs credentials need separate setup.
+      Pairing appends a phone public key to ~/.ssh/authorized_keys; existing keys are preserved.
       Before uninstalling: brew services stop nock
       Settings, keys, and conversation history are retained on uninstall.
     EOS
