@@ -1,9 +1,9 @@
 class Nock < Formula
   desc "Control your own Codex sessions from an iPhone over SSH"
   homepage "https://github.com/tamoharu/nock-setup"
-  url "https://github.com/tamoharu/nock-setup/releases/download/v0.3.4/nock-0.3.4.tar.gz"
-  version "0.3.4"
-  sha256 "ebf8da3032fe91fc0918350a71c526f5a2915f07c07e52010420c3203d1becc3"
+  url "https://github.com/tamoharu/nock-setup/releases/download/v0.3.5/nock-0.3.5.tar.gz"
+  version "0.3.5"
+  sha256 "d5d974c371013b11e0996e30a2ea18b40c1eb772bcc4f4554dc04e0630ae148b"
 
   depends_on "node@24"
   depends_on "tmux"
@@ -43,10 +43,13 @@ class Nock < Formula
       Scan the QR using Nock on your iPhone. Keys are generated on the phone.
       nock pair                           Show a new 5-minute pairing QR
 
-      nock doctor                         Check SSH, Tailscale and Codex login
+      nock doctor                         Check running version, code browsing, SSH and login
       nock login                          Only if Codex is not logged in yet
       nock project add /path/to/project    Add a project immediately, without interrupting work
       nock restart                        Apply other config changes after work finishes
+
+      After brew upgrade, run nock restart when active work finishes.
+      Reconnect the iPhone and check matching package/daemon versions in nock doctor.
 
       iPhone Bundle ID: com.deep.nock
       API credentials are discovered over authenticated SSH; no token copy needed.
@@ -63,6 +66,9 @@ class Nock < Formula
     assert_path_exists testpath/"nock-state/config/config.json"
     assert_equal 0600, (testpath/"nock-state/config/api-token").stat.mode & 0777
     report = JSON.parse(shell_output("#{bin}/nock doctor --json"))
+    assert_equal version.to_s, report.fetch("installedVersion")
+    assert_nil report.fetch("daemonVersion")
+    assert_equal false, report.fetch("restartRequired")
     assert_equal true, report.fetch("codexVersion")
     assert_equal false, report.fetch("running")
     assert_equal 1, report.fetch("projects").length
